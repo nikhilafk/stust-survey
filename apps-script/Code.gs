@@ -12,7 +12,7 @@ const TZ = 'Asia/Taipei';
 
 const Q = [
   ['Q01','choice','Background','What is your current year of study?','你目前就讀的年級是？',['Year 1','Year 2','Year 3','Year 4','Graduate','Other']],
-  ['Q02','text','Background','Which STUST department or program do you study in?','你目前就讀南臺科大哪個系所？'],
+  ['Q02','text','Background','Which university and department do you study in?','你目前就讀的學校與系所是？'],
   ['Q03','choice','Background','Have you used generative AI for university coursework?','你是否曾在課業中使用過生成式 AI？',['Yes','No']],
   ['Q04','choice','Background','How often do you use generative AI for university work?','你使用生成式 AI 處理課業的頻率為何？',['Less than monthly','1–3 times / month','1–2 days / week','3–5 days / week','Daily']],
   ['Q05','choice','Background','Which generative AI tool do you use most often?','你最常使用哪一種生成式 AI 工具？',['ChatGPT','Gemini','Microsoft Copilot','Claude','Other']],

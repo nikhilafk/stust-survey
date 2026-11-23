@@ -33,7 +33,7 @@
   };
   const Q = [
     { id: 'Q01', type: 'choice', group: 'profile', en: 'What is your current year of study?', zh: '你目前就讀的年級是？', options: [['Year 1', '大一'], ['Year 2', '大二'], ['Year 3', '大三'], ['Year 4', '大四'], ['Graduate', '研究所'], ['Other', '其他']] },
-    { id: 'Q02', type: 'text', group: 'profile', en: 'Which STUST department or program do you study in?', zh: '你目前就讀南臺科大哪個系所？', placeholder: '例如：資訊管理系', placeholderEn: 'e.g. Information Management' },
+    { id: 'Q02', type: 'text', group: 'profile', en: 'Which university and department do you study in?', zh: '你目前就讀的學校與系所是？', placeholder: '例如：南臺科大 資訊管理系', placeholderEn: 'e.g. STUST, Information Management' },
     { id: 'Q03', type: 'choice', group: 'profile', en: 'Have you used generative AI for university coursework?', zh: '你是否曾在課業中使用過生成式 AI？', options: [['Yes', '有'], ['No', '沒有']] },
     { id: 'Q04', type: 'choice', group: 'profile', en: 'How often do you use generative AI for university work?', zh: '你使用生成式 AI 處理課業的頻率為何？', options: [['Less than monthly', '不到每月一次'], ['1–3 times / month', '每月 1–3 次'], ['1–2 days / week', '每週 1–2 天'], ['3–5 days / week', '每週 3–5 天'], ['Daily', '每天']] },
     { id: 'Q05', type: 'choice', group: 'profile', en: 'Which generative AI tool do you use most often?', zh: '你最常使用哪一種生成式 AI 工具？', options: [['ChatGPT', 'ChatGPT'], ['Gemini', 'Gemini'], ['Microsoft Copilot', 'Microsoft Copilot'], ['Claude', 'Claude'], ['Other', '其他']] },

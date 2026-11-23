@@ -1,6 +1,6 @@
 # 誰在思考？— STUST Student Thinking Study
 
-This is an anonymous bilingual survey, in Traditional Chinese and English, about generative AI dependence, critical thinking and creativity among students at Southern Taiwan University of Science and Technology (南臺科技大學). Nikky designed and built it.
+This is an anonymous bilingual survey, in Traditional Chinese and English, about generative AI dependence, critical thinking and creativity among university students. Nikky designed and built it.
 
 **Live:** https://nikhilafk.github.io/stust-survey/
 
