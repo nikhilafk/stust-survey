@@ -255,34 +255,6 @@
   }
   const bindButtons = (root = document) => $$('[data-magnetic], .btn-pill', root).forEach(el => { bindMagnetic(el); bindLiquid(el); });
 
-  // Structure rows: cursor-following sample question (desktop)
-  const SAMPLES = [
-    { sec: SECTIONS[0], q: Q[4], pick: 'ChatGPT' },
-    { sec: SECTIONS[1], q: Q[5], pick: 4 },
-    { sec: SECTIONS[2], q: Q[9], pick: 5 },
-    { sec: SECTIONS[3], q: Q[27], pick: 3 }
-  ];
-  function initPreview() {
-    if (!finePointer || reduced) return;
-    const box = $('#preview'), rows = $('#rows');
-    let tx = 0, ty = 0, x = 0, y = 0, raf = 0, on = false;
-    const loop = () => { x += (tx - x) * 0.16; y += (ty - y) * 0.16; box.style.left = x + 'px'; box.style.top = y + 'px'; raf = on || Math.abs(tx - x) > 0.5 ? requestAnimationFrame(loop) : 0; };
-    $$('.row', rows).forEach(row => {
-      row.addEventListener('pointerenter', e => {
-        const s = SAMPLES[+row.dataset.sample];
-        $('#previewKicker').textContent = `範例題目 · Sample — ${s.sec.no} ${s.sec.label}`;
-        $('#previewQ').textContent = s.q.zh;
-        $('#previewScale').innerHTML = s.q.type === 'scale'
-          ? [1, 2, 3, 4, 5].map(n => `<i class="${n === s.pick ? 'on' : ''}">${n}</i>`).join('')
-          : s.q.options.slice(0, 4).map(([en, zh]) => `<i class="opt ${en === s.pick ? 'on' : ''}">${esc(zh)}</i>`).join('');
-        if (!on) { x = tx = e.clientX; y = ty = e.clientY; }
-        on = true; box.classList.add('on'); if (!raf) raf = requestAnimationFrame(loop);
-      });
-    });
-    rows.addEventListener('pointermove', e => { tx = e.clientX; ty = e.clientY; if (!raf) raf = requestAnimationFrame(loop); });
-    rows.addEventListener('pointerleave', () => { on = false; box.classList.remove('on'); });
-  }
-
   // Researcher portrait parallax
   function initParallax() {
     if (reduced) return;
@@ -726,7 +698,6 @@
     initMarquee();
     initVenn();
     initReveal();
-    initPreview();
     initParallax();
     initClock();
     initFloatCta();
