@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light">
+<meta name="theme-color" content="#F3EFE6">
+<meta name="description" content="南臺科技大學學生研究問卷：生成式 AI 依賴、批判性思考與創造力之關聯性研究。線上匿名作答，不蒐集姓名或學號。STUST research survey on AI dependence, critical thinking and creativity.">
+<title>誰在思考？— 南臺科技大學 學生 AI 研究問卷</title>
+<style>
+/* ============================================================
+   南臺科技大學 · 學生思考研究 — Visual system 2026
+   Paper / Ink / Vermilion (朱). Serif TC for display,
+   Sans TC for reading, a quiet Latin grotesk for English.
+   ============================================================ */
+:root{
+  --paper:#F3EFE6;--paper-2:#EAE4D7;--card:#FBF9F4;
+  --ink:#1B1A17;--ink-2:#46433C;--stone:#8A8478;
+  --rule:#D8D0C0;--rule-2:#BFB6A4;
+  --red:#B5302A;--red-dk:#8F231E;--ok:#3E6E52;
+  --serif:'Noto Serif TC','Source Han Serif TC','Songti TC','PMingLiU',serif;
+  --sans:'Noto Sans TC','Source Han Sans TC','PingFang TC','Microsoft JhengHei',sans-serif;
+  --latin:'Helvetica Neue','Segoe UI',Arial,sans-serif;
+  --mono:ui-monospace,'SFMono-Regular',Consolas,'Liberation Mono',monospace;
+  --header:68px;--footer:80px;--pad:clamp(20px,4.4vw,76px);
+  --ease:cubic-bezier(.2,.7,.2,1);
+}
+*{box-sizing:border-box}
+html{font-size:16px}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;overscroll-behavior:none}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+button:disabled{cursor:not-allowed;opacity:.35}
+:focus-visible{outline:2px solid var(--red);outline-offset:3px}
+::selection{background:var(--red);color:#fff}
+::-webkit-scrollbar{width:8px}::-webkit-scrollbar-thumb{background:var(--rule-2);border:2px solid var(--paper)}
+.hidden{display:none!important}
+
+/* ---------- shared type ---------- */
+.en{font-family:var(--latin);font-weight:400;color:var(--stone);letter-spacing:.01em}
+.lbl{font:500 10.5px/1.4 var(--latin);letter-spacing:.16em;text-transform:uppercase;color:var(--stone)}
+.kicker{display:flex;align-items:baseline;gap:12px;font:700 13px/1.4 var(--sans);letter-spacing:.24em;color:var(--ink)}
+.kicker:before{content:'';width:22px;height:1px;background:var(--red);align-self:center}
+.tcu{text-combine-upright:all}
+
+/* ---------- frame ---------- */
+#app{height:100dvh;min-height:540px;overflow:hidden;display:flex;flex-direction:column}
+.header{height:var(--header);flex:0 0 var(--header);display:flex;align-items:center;justify-content:space-between;gap:20px;padding:0 var(--pad);background:var(--paper);border-bottom:1px solid var(--ink);position:relative;z-index:40}
+.brand{display:flex;align-items:center;gap:14px;min-width:0}
+.seal{flex:0 0 auto;width:34px;height:34px;background:var(--red);color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;font:900 12px/1.08 var(--serif);border-radius:2px;box-shadow:inset 0 0 0 2px var(--red),inset 0 0 0 3px #ffffffb0}
+.brandname{display:flex;flex-direction:column;gap:3px;min-width:0}
+.brandname strong{font:700 15px/1.2 var(--sans);letter-spacing:.12em;white-space:nowrap}
+.brandname .lbl{font-size:9.5px;white-space:nowrap}
+.header-right{display:flex;align-items:center;gap:24px}
+.serial{font:500 12px/1.4 var(--sans);letter-spacing:.2em;color:var(--ink-2);white-space:nowrap}
+.status-button{display:inline-flex;align-items:center;gap:10px;background:transparent;border:1px solid var(--rule-2);padding:8px 14px}
+#storageText{font:500 13px/1.2 var(--sans);letter-spacing:.08em;display:flex;align-items:baseline;gap:8px;white-space:nowrap}
+#storageText small{font:500 9.5px var(--latin);letter-spacing:.14em;text-transform:uppercase;color:var(--stone)}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--red);flex:0 0 auto}
+.dot.connected{background:var(--ok)}
+.header-meter{position:absolute;left:0;bottom:-1px;height:3px;width:0;background:var(--red);transition:width .6s var(--ease)}
+
+.main{position:relative;flex:1;min-height:0;overflow:hidden;background:var(--paper)}
+.stage{position:absolute;inset:0;overflow-x:hidden;overflow-y:auto;overscroll-behavior-y:contain;scroll-behavior:smooth;display:none}
+.stage.active{display:block}
+.stage.entering .reveal{animation:rise .7s var(--ease) both;animation-delay:calc(var(--d,0) * 60ms)}
+@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.scene-wipe{position:absolute;inset:0;z-index:45;pointer-events:none;background:var(--paper);display:none;opacity:0}
+.scene-wipe>span{display:none}
+.scene-wipe.active{display:block;animation:fade-in .34s ease forwards}
+.scene-wipe.exit{animation:fade-out .42s ease forwards}
+@keyframes fade-in{from{opacity:0}to{opacity:1}}@keyframes fade-out{from{opacity:1}to{opacity:0}}
+
+.footer{height:var(--footer);flex:0 0 var(--footer);display:flex;align-items:center;justify-content:space-between;gap:18px;padding:0 var(--pad);background:var(--paper);border-top:1px solid var(--ink);z-index:35}
+.foot-left{display:flex;align-items:center;gap:22px;min-width:0}
+.foot-count{display:flex;align-items:baseline;gap:10px;white-space:nowrap}
+.foot-label{font:500 13px var(--sans);letter-spacing:.16em;color:var(--ink-2)}
+.foot-index{font:600 20px/1 var(--latin);font-variant-numeric:tabular-nums;letter-spacing:.02em}
+.foot-caption{font:500 13px/1.4 var(--sans);letter-spacing:.1em;color:var(--ink-2);padding-left:22px;border-left:1px solid var(--rule-2);display:flex;align-items:baseline;gap:10px;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.foot-caption small{font:500 9.5px var(--latin);letter-spacing:.14em;text-transform:uppercase;color:var(--stone)}
+.foot-actions{display:flex;align-items:center;gap:10px}
+.navbtn{height:50px;padding:0 22px;display:inline-flex;align-items:center;gap:12px;border:1px solid var(--ink);background:transparent;color:var(--ink);transition:background .2s,color .2s,border-color .2s;white-space:nowrap}
+.navbtn:hover:not(:disabled){background:var(--paper-2)}
+.navbtn .bt-zh,#backText{font:600 15px/1 var(--sans);letter-spacing:.14em}
+.navbtn .bt-en{font:500 9.5px/1 var(--latin);letter-spacing:.16em;text-transform:uppercase;color:var(--stone)}
+.navbtn .arrow{font:400 17px/1 var(--latin);margin-left:4px}
+.navbtn.primary{background:var(--ink);color:var(--paper);border-color:var(--ink);padding:0 26px}
+.navbtn.primary .bt-en{color:#ABA393}
+.navbtn.primary:hover:not(:disabled){background:var(--red);border-color:var(--red)}
+.navbtn.primary:hover:not(:disabled) .bt-en{color:#F2C9C4}
+
+/* ---------- hero ---------- */
+.hero{min-height:100%;padding:clamp(24px,4.5vh,56px) var(--pad) clamp(24px,4vh,44px);display:grid;grid-template-columns:repeat(12,minmax(0,1fr));grid-template-rows:auto 1fr auto;column-gap:clamp(14px,2vw,32px)}
+.hero-meta{grid-column:1/-1;display:flex;justify-content:space-between;align-items:flex-end;gap:24px;padding-bottom:14px;border-bottom:1px solid var(--rule-2)}
+.hero-meta .zh{font:700 14px/1.4 var(--sans);letter-spacing:.24em}
+.hero-meta .lbl{display:block;margin-top:5px}
+.hero-meta .right{text-align:right}
+.hero-head{grid-column:1/11;align-self:center;padding:clamp(20px,5vh,64px) 0}
+.hero-title{margin:0;font:900 clamp(84px,min(15.5vw,22vh),250px)/1 var(--serif);letter-spacing:-.02em;font-feature-settings:"palt";color:var(--ink)}
+.hero-title span{display:block}
+.hero-title span:nth-child(2){padding-left:1em}
+.hero-title em{font-style:normal;color:var(--red)}
+.hero-en{margin:clamp(14px,2vh,24px) 0 0;padding-left:calc(clamp(84px,min(15.5vw,22vh),250px) * 1.02);font:400 clamp(13px,1vw,15px)/1.4 var(--latin);letter-spacing:.18em;text-transform:uppercase;color:var(--stone)}
+.hero-vertical{grid-column:12/13;justify-self:end;align-self:center;writing-mode:vertical-rl;font:500 15px/1.9 var(--serif);letter-spacing:.42em;color:var(--ink-2);padding-left:16px;border-left:1px solid var(--rule-2);white-space:nowrap}
+.hero-vertical b{color:var(--red);font-weight:500}
+.hero-foot{grid-column:1/-1;display:grid;grid-template-columns:minmax(0,5fr) minmax(0,3fr) minmax(0,4fr);column-gap:clamp(20px,3vw,52px);border-top:1px solid var(--ink);padding-top:22px}
+.lede{margin:0;font:700 clamp(18px,1.6vw,23px)/1.6 var(--sans);letter-spacing:.06em;font-feature-settings:"palt"}
+.lede .en{display:block;margin-top:10px;font-size:13px;line-height:1.55;font-weight:400;letter-spacing:.01em;max-width:420px}
+.facts{margin:0;display:flex;flex-direction:column}
+.facts div{display:flex;align-items:baseline;gap:12px;padding:7px 0;border-bottom:1px solid var(--rule)}
+.facts div:first-child{padding-top:0}
+.facts dt{font:500 24px/1 var(--serif);min-width:2.2em;color:var(--red);font-variant-numeric:lining-nums}
+.facts dd{margin:0;font:500 14px/1.3 var(--sans);letter-spacing:.1em}
+.facts dd small{margin-left:8px;font:500 9.5px var(--latin);letter-spacing:.14em;text-transform:uppercase;color:var(--stone)}
+.consent{display:flex;gap:14px;align-items:flex-start;cursor:pointer}
+.consent input{appearance:none;-webkit-appearance:none;flex:0 0 22px;width:22px;height:22px;margin:2px 0 0;border:1px solid var(--ink);background:var(--card);display:grid;place-items:center;cursor:pointer;transition:background .15s}
+.consent input:checked{background:var(--red);border-color:var(--red)}
+.consent input:checked:after{content:'';width:6px;height:11px;border:solid #fff;border-width:0 2px 2px 0;transform:translateY(-1px) rotate(45deg)}
+.consent .txt{font:400 14px/1.8 var(--sans);letter-spacing:.04em;color:var(--ink)}
+.consent .txt b{font-weight:700}
+.consent .en{display:block;margin-top:6px;font-size:11.5px;line-height:1.55}
+.repeat-note{margin:14px 0 0;padding:10px 0 0;border-top:1px solid var(--rule);font:500 13px/1.6 var(--sans);letter-spacing:.04em;color:var(--red)}
+.repeat-note .en{display:block;font-size:11px}
+
+/* ---------- section layout ---------- */
+.sec{display:grid;grid-template-columns:minmax(300px,33%) minmax(0,1fr);min-height:100%}
+.sec-side{position:sticky;top:0;align-self:start;height:calc(100dvh - var(--header) - var(--footer));min-height:440px;overflow:hidden;display:flex;flex-direction:column;justify-content:space-between;padding:clamp(28px,5vh,60px) clamp(24px,3.6vw,60px);background:var(--paper-2);border-right:1px solid var(--ink)}
+.sec-top .lbl{display:block;margin-top:8px;padding-left:34px}
+.sec-num{font:900 clamp(120px,13vw,210px)/.86 var(--serif);color:var(--red);margin:0 0 0 -.04em;font-feature-settings:"palt"}
+.sec-title{margin:0;font:900 clamp(38px,3.9vw,64px)/1.22 var(--serif);letter-spacing:.02em;font-feature-settings:"palt"}
+.sec-title em{font-style:normal;color:var(--red)}
+.sec-en{margin:10px 0 0;font:400 12px/1.4 var(--latin);letter-spacing:.18em;text-transform:uppercase;color:var(--stone)}
+.sec-desc{margin:22px 0 0;padding-top:18px;border-top:1px solid var(--rule-2);font:500 15px/1.8 var(--sans);letter-spacing:.05em;color:var(--ink-2);max-width:340px}
+.sec-desc b{display:block;color:var(--ink);font-weight:700;margin-bottom:2px}
+.sec-desc .en{display:block;margin-top:8px;font-size:12px;line-height:1.55;letter-spacing:.01em}
+.sec-main{padding:clamp(28px,5vh,64px) clamp(24px,5vw,92px) 72px;background:var(--paper)}
+.qlist{max-width:800px}
+.list-head{display:flex;justify-content:space-between;align-items:baseline;padding-bottom:14px;border-bottom:1px solid var(--ink)}
+.list-head .zh{font:700 14px var(--sans);letter-spacing:.2em}
+
+/* ---------- questions ---------- */
+.qitem{display:grid;grid-template-columns:60px minmax(0,1fr);padding:30px 0 34px;border-bottom:1px solid var(--rule);scroll-margin-top:28px;transition:background .3s}
+.qno{font:600 13px/1 var(--latin);font-variant-numeric:tabular-nums;letter-spacing:.08em;color:var(--red);padding-top:.72em}
+.qzh{margin:0;text-wrap:pretty;font:500 clamp(19px,1.5vw,23px)/1.65 var(--sans);letter-spacing:.045em;color:var(--ink);font-feature-settings:"palt"}
+.qen{margin:6px 0 0;font:400 13px/1.55 var(--latin);color:var(--stone)}
+.qanswer{margin-top:20px}
+.qitem.missing{background:linear-gradient(90deg,#B5302A0d,transparent 70%)}
+.qitem.missing .qno{color:var(--ink)}
+.qitem.missing .qno:after{content:'';display:block;width:8px;height:8px;margin-top:10px;background:var(--red)}
+.qitem.missing .qzh:after{content:'尚未作答';margin-left:14px;font:700 11px/1 var(--sans);letter-spacing:.16em;color:var(--red);vertical-align:middle;white-space:nowrap}
+
+.option-wrap{display:flex;flex-wrap:wrap;gap:8px}
+.option{display:inline-flex;align-items:baseline;gap:9px;min-height:46px;padding:12px 17px;border:1px solid var(--rule-2);background:var(--card);color:var(--ink);transition:background .18s,border-color .18s,color .18s}
+.option:hover{border-color:var(--ink)}
+.option .o-zh{font:500 15px/1.2 var(--sans);letter-spacing:.06em}
+.option .o-en{font:400 11px/1.2 var(--latin);color:var(--stone)}
+.option.active{background:var(--ink);border-color:var(--ink);color:var(--paper)}
+.option.active .o-en{color:#ABA393}
+
+.line-input{width:100%;max-width:560px;border:0;border-bottom:1px solid var(--ink);background:transparent;padding:10px 0 12px;font:500 20px/1.4 var(--sans);letter-spacing:.04em;outline:0;border-radius:0}
+.line-input:focus{border-bottom:2px solid var(--red);padding-bottom:11px}
+.line-input::placeholder{color:#A8A194;font-size:15px;font-weight:400}
+
+.scale{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));max-width:560px;border:1px solid var(--rule-2);background:var(--card)}
+.scale-btn{height:54px;border:0;border-left:1px solid var(--rule);background:transparent;font:500 19px/1 var(--serif);color:var(--ink);transition:background .16s,color .16s}
+.scale-btn:first-child{border-left:0}
+.scale-btn:hover{background:var(--paper-2)}
+.scale-btn.selected{background:var(--ink);color:var(--paper)}
+.scale-hints{display:flex;justify-content:space-between;gap:16px;max-width:560px;margin-top:10px}
+.scale-hints div{font:500 13px/1.4 var(--sans);letter-spacing:.08em;color:var(--ink-2)}
+.scale-hints .en{display:block;font-size:10.5px;letter-spacing:.04em;margin-top:2px}
+.scale-hints div:last-child{text-align:right}
+
+.cluster{display:flex;align-items:baseline;gap:14px;margin:60px 0 0;padding-bottom:14px;border-bottom:1px solid var(--ink)}
+.cluster:first-child{margin-top:0}
+.cl-no{font:700 13px var(--serif);letter-spacing:.1em;color:var(--red);padding:3px 6px;border:1px solid var(--red);align-self:center}
+.cl-zh{font:700 clamp(22px,2vw,28px)/1.2 var(--serif);letter-spacing:.12em}
+.cl-en{margin-left:auto;font:500 10.5px var(--latin);letter-spacing:.16em;text-transform:uppercase;color:var(--stone)}
+
+/* ---------- review (inverted) ---------- */
+.review{min-height:100%;background:var(--ink);color:var(--paper);padding:clamp(28px,5vh,64px) var(--pad) 64px}
+.review .kicker{color:var(--paper)}
+.review .lbl,.review .en{color:#9A9384}
+.rv-head{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:40px;align-items:end;padding-bottom:clamp(28px,5vh,52px);border-bottom:1px solid #5A564D}
+.rv-title{margin:clamp(20px,4vh,44px) 0 0;font:900 clamp(72px,10vw,168px)/1.04 var(--serif);letter-spacing:-.01em;font-feature-settings:"palt"}
+.rv-title em{font-style:normal;color:var(--red)}
+.rv-sub{margin:20px 0 0;max-width:520px;font:400 16px/1.8 var(--sans);letter-spacing:.05em;color:#D9D3C6}
+.rv-sub .en{display:block;margin-top:6px;font-size:12.5px}
+.rv-count{text-align:right}
+.rv-count strong{display:block;font:500 clamp(84px,9vw,150px)/.9 var(--serif);font-variant-numeric:lining-nums;color:var(--paper)}
+.rv-count .of{display:block;margin-top:10px;font:500 15px var(--sans);letter-spacing:.2em;color:#C9C2B3}
+.rv-lines{max-width:1100px}
+.review-line{display:grid;grid-template-columns:minmax(0,1.2fr) 80px minmax(0,1.4fr);gap:28px;align-items:center;padding:20px 0;border-bottom:1px solid #3E3B35}
+.review-line .nm{font:700 clamp(17px,1.5vw,21px)/1.3 var(--sans);letter-spacing:.12em}
+.review-line .nm .en{display:block;margin-top:5px;font:500 10px var(--latin);letter-spacing:.16em;text-transform:uppercase}
+.review-line .n{font:500 15px var(--latin);font-variant-numeric:tabular-nums;text-align:right;color:#D9D3C6}
+.line-meter{height:1px;background:#5A564D;position:relative}
+.line-meter span{position:absolute;left:0;top:-1px;height:3px;background:var(--red);transform-origin:left;animation:grow 1.2s var(--ease) both}
+.line-meter span.full{background:var(--paper)}
+@keyframes grow{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+.save-message{margin-top:36px;max-width:760px;padding:18px 0 0 22px;border-left:2px solid var(--red)}
+.save-message strong{display:block;font:700 15px/1.5 var(--sans);letter-spacing:.1em;color:var(--paper)}
+.save-message .en{display:block;margin-top:4px;font-size:12px}
+.save-message .navbtn{margin-top:16px;color:var(--paper);border-color:var(--paper)}
+.save-message .navbtn:hover{background:var(--paper);color:var(--ink)}
+
+/* ---------- success ---------- */
+.success{min-height:100%;padding:clamp(28px,5vh,64px) var(--pad) 64px;display:grid;grid-template-columns:minmax(0,1fr) auto;column-gap:40px;align-content:start}
+.success .kicker{grid-column:1/-1;padding-bottom:16px;border-bottom:1px solid var(--rule-2)}
+.sc-body{grid-column:1/2}
+.sc-title{margin:clamp(32px,7vh,80px) 0 0;font:900 clamp(72px,10.5vw,176px)/1.08 var(--serif);letter-spacing:-.01em;font-feature-settings:"palt"}
+.sc-title em{font-style:normal;color:var(--red)}
+.sc-en{margin:16px 0 0;font:400 14px var(--latin);letter-spacing:.2em;text-transform:uppercase;color:var(--stone)}
+.sc-txt{margin:32px 0 0;max-width:600px;font:400 16px/1.85 var(--sans);letter-spacing:.05em;color:var(--ink-2)}
+.sc-txt .en{display:block;margin-top:8px;font-size:12.5px;line-height:1.6}
+.sc-meta{margin:36px 0 0;max-width:640px;border-top:1px solid var(--ink)}
+.sc-meta div{display:grid;grid-template-columns:180px minmax(0,1fr);gap:20px;padding:13px 0;border-bottom:1px solid var(--rule);align-items:baseline}
+.sc-meta dt{font:700 14px var(--sans);letter-spacing:.14em}
+.sc-meta dt small{display:block;margin-top:3px;font:500 9.5px var(--latin);letter-spacing:.14em;text-transform:uppercase;color:var(--stone)}
+.sc-meta dd{margin:0;font:500 13px var(--mono);overflow-wrap:anywhere}
+.sc-seal{grid-column:2/3;grid-row:2;align-self:start;margin-top:clamp(40px,8vh,96px);width:clamp(96px,10vw,148px);aspect-ratio:1/1.7;background:var(--red);color:var(--paper);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.1em;font:900 clamp(40px,4.2vw,62px)/1 var(--serif);border-radius:4px;box-shadow:inset 0 0 0 6px var(--red),inset 0 0 0 8px #F3EFE6cc;transform:rotate(-4deg)}
+
+/* ---------- modal ---------- */
+.modal{position:fixed;inset:0;z-index:60;display:none;align-items:center;justify-content:center;padding:20px;background:#1B1A17b3}
+.modal.open{display:flex}
+.modal-panel{position:relative;width:min(640px,100%);max-height:min(860px,94dvh);overflow:auto;background:var(--paper);color:var(--ink);padding:clamp(26px,4.5vw,52px);border-top:4px solid var(--red)}
+.modal-close{position:absolute;right:18px;top:12px;width:40px;height:40px;background:none;border:0;font:300 30px/1 var(--latin);color:var(--ink)}
+.modal-title{margin:26px 0 0;font:900 clamp(38px,5vw,58px)/1.2 var(--serif);letter-spacing:.01em;font-feature-settings:"palt"}
+.modal-title em{font-style:normal;color:var(--red)}
+.modal-en{margin:10px 0 0;font:400 12px var(--latin);letter-spacing:.18em;text-transform:uppercase;color:var(--stone)}
+.modal-desc{margin:22px 0 0;font:400 15px/1.85 var(--sans);letter-spacing:.04em;color:var(--ink-2)}
+.modal-desc strong{color:var(--ink)}
+.modal-desc .en{display:block;margin-top:8px;font-size:12px;line-height:1.6}
+.tree{margin-top:20px;padding:16px 18px;background:var(--card);border:1px solid var(--rule);font:12.5px/1.95 var(--mono);color:var(--ink-2)}
+.tree b{color:var(--red);font-weight:600}
+.tree .zh{font-family:var(--sans);font-weight:700;letter-spacing:.1em;color:var(--ink)}
+.modal-count{margin-top:14px;font:700 14px/1.5 var(--sans);letter-spacing:.06em;color:var(--ok)}
+.modal-count small{display:block;font:500 11px var(--latin);color:var(--stone);letter-spacing:.02em}
+.modal-actions{margin:22px 0 0;border-top:1px solid var(--ink)}
+.mbtn{width:100%;display:grid;grid-template-columns:40px minmax(0,1fr) auto;align-items:baseline;gap:12px;padding:16px 4px;background:transparent;border:0;border-bottom:1px solid var(--rule);text-align:left;transition:background .18s}
+.mbtn:hover{background:var(--paper-2)}
+.mbtn .n{font:600 12px var(--latin);color:var(--red);letter-spacing:.08em}
+.mbtn .bt-zh{font:700 16px var(--sans);letter-spacing:.12em}
+.mbtn .bt-en{font:500 9.5px var(--latin);letter-spacing:.14em;text-transform:uppercase;color:var(--stone)}
+.mbtn.primary .bt-zh{color:var(--red)}
+.modal-note{margin:22px 0 0;font:400 13px/1.85 var(--sans);letter-spacing:.04em;color:var(--ink-2)}
+.modal-note .en{display:block;margin-top:8px;font-size:11.5px;line-height:1.6}
+
+/* ---------- toast / loading ---------- */
+.toast{position:fixed;z-index:90;right:var(--pad);top:calc(var(--header) + 16px);max-width:min(420px,calc(100vw - 40px));padding:14px 18px 15px 20px;background:var(--ink);color:var(--paper);border-left:3px solid var(--red);transform:translateY(-10px);opacity:0;pointer-events:none;transition:transform .25s,opacity .25s}
+.toast.visible{opacity:1;transform:none}
+.toast strong{display:block;font:700 14px/1.55 var(--sans);letter-spacing:.06em}
+.toast span{display:block;margin-top:3px;font:400 11.5px/1.5 var(--latin);color:#ABA393}
+.loading{position:fixed;inset:0;z-index:90;display:none;flex-direction:column;align-items:center;justify-content:center;gap:18px;background:#F3EFE6f2;color:var(--ink)}
+.loading.open{display:flex}
+.loading .giant{font:500 clamp(84px,11vw,150px)/1 var(--serif);font-variant-numeric:tabular-nums lining-nums}
+#savingMessage{font:700 15px/1.5 var(--sans);letter-spacing:.16em;text-align:center}
+#savingMessage small{display:block;margin-top:4px;font:500 10px var(--latin);letter-spacing:.16em;text-transform:uppercase;color:var(--stone)}
+.loadbar{width:min(420px,70vw);height:1px;background:var(--rule-2);position:relative}
+.loadbar span{position:absolute;left:0;top:-1px;height:3px;width:0;background:var(--red);transition:width .12s}
+
+/* ---------- responsive ---------- */
+@media(max-width:1100px){
+  .hero-foot{grid-template-columns:minmax(0,1fr) minmax(0,1fr);row-gap:26px}
+  .hero-foot .consent{grid-column:1/-1;padding-top:20px;border-top:1px solid var(--rule)}
+  .foot-caption{display:none}
+}
+@media(max-width:820px){
+  :root{--header:60px;--footer:74px}
+  .serial,.brandname .lbl,#storageText small{display:none}
+  .hero{grid-template-rows:auto auto auto}
+  .hero-meta .right .lbl{display:none}
+  .hero-head{grid-column:1/-1;padding:clamp(36px,9vh,80px) 0 32px}
+  .hero-title{font-size:clamp(64px,21vw,150px)}
+  .hero-en{padding-left:0;margin-top:18px}
+  .hero-vertical{display:none}
+  .hero-foot{grid-template-columns:1fr}
+  .sec{display:block}
+  .sec-side{position:relative;height:auto;min-height:0;display:grid;grid-template-columns:minmax(0,1fr) auto;column-gap:16px;padding:26px 22px 28px;border-right:0;border-bottom:1px solid var(--ink)}
+  .sec-top{grid-column:1/-1;margin-bottom:22px}
+  .sec-num{grid-column:2;grid-row:2;font-size:88px;align-self:start}
+  .sec-bottom{grid-column:1;grid-row:2}
+  .sec-title{font-size:clamp(32px,8.5vw,46px)}
+  .sec-desc{margin-top:16px;padding-top:14px;font-size:14px}
+  .sec-main{padding:22px 22px 56px}
+  .qitem{grid-template-columns:40px minmax(0,1fr);padding:24px 0 28px}
+  .qzh{font-size:18px}
+  .scale-btn{height:50px}
+  .option{padding:11px 14px}
+  .cluster{margin-top:44px}
+  .rv-head{grid-template-columns:1fr;gap:18px}
+  .rv-count{text-align:left;display:flex;align-items:baseline;gap:14px}
+  .rv-count .lbl{order:3}
+  .review-line{grid-template-columns:minmax(0,1fr) 54px;gap:10px 16px}
+  .review-line .line-meter{grid-column:1/-1}
+  .success{grid-template-columns:1fr}
+  .sc-seal{position:absolute;right:var(--pad);top:16px;margin:0;width:46px;font-size:18px;box-shadow:inset 0 0 0 3px var(--red),inset 0 0 0 4px #F3EFE6cc;transform:rotate(-4deg)}
+  .success .kicker{padding-right:64px}
+  .hero-meta .right{display:none}
+  .success{position:relative}
+  .sc-meta div{grid-template-columns:1fr;gap:4px}
+  .footer{padding:0 16px}
+  .foot-left{gap:12px}
+  .navbtn{height:46px;padding:0 15px;gap:8px}
+  .navbtn.primary{padding:0 18px}
+  .navbtn .bt-en{display:none}
+}
+@media(max-width:420px){
+  .foot-label{display:none}
+  .brandname strong{font-size:13px;letter-spacing:.06em}
+}
+@media(max-height:720px) and (min-width:821px){
+  .hero-title{font-size:clamp(80px,min(12vw,20vh),190px)}
+  .hero-head{padding:18px 0}
+  .sec-num{font-size:clamp(96px,10vw,150px)}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*:before,*:after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
+  .scene-wipe{display:none!important}
+}
+</style>
+</head>
+<body>
+<div id="app">
+<header class="header">
+  <div class="brand">
+    <div class="seal" aria-hidden="true"><span>南</span><span>臺</span></div>
+    <div class="brandname"><strong>南臺科技大學・學生思考研究</strong><span class="lbl">STUST — The Thinking Study</span></div>
+  </div>
+  <div class="header-right">
+    <div class="serial">二〇二六 研究問卷</div>
+    <div class="status-button" role="note"><i class="dot connected"></i><span id="storageText">匿名作答<small>Anonymous</small></span></div>
+  </div>
+  <div class="header-meter" id="headerMeter"></div>
+</header>
+<main class="main" id="main">
+  <div class="stage active" id="view" aria-live="polite"></div>
+  <div class="scene-wipe" id="wipe" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
+</main>
+<footer class="footer" id="footer">
+  <div class="foot-left">
+    <div class="foot-count"><span class="foot-label">已作答</span><span class="foot-index" id="footIndex">00 / 31</span></div>
+    <span class="foot-caption" id="footCaption">匿名研究問卷<small>Anonymous research survey</small></span>
+  </div>
+  <div class="foot-actions">
+    <button class="navbtn" id="backBtn" style="display:none"><span class="arrow">←</span><span id="backText">返回</span><span class="bt-en">Back</span></button>
+    <button class="navbtn primary" id="nextBtn"><span class="bt-zh">開始作答</span><span class="bt-en">Begin</span><span class="arrow">→</span></button>
+  </div>
+</footer>
+</div>
+
+<div class="toast" id="toast" role="status"></div>
+<div class="loading" id="loading" aria-live="assertive"><div class="giant" id="savingPercent">00%</div><div id="savingMessage">正在送出答案<small>Submitting your answers</small></div><div class="loadbar"><span id="savingBar"></span></div></div>
+<script>
+'use strict';
+/*
+ * STUST STUDENT AI RESEARCH SURVEY — ONLINE EDITION (Google Sheets)
+ * Original bilingual wording written for this survey. The 3/17/6 structure is
+ * based on Study 1 of Yuan, Liu & Yang (2026), but it is NOT the verbatim,
+ * validated instrument. Professor/ethics approval and pilot testing are needed.
+ * The only network request is the final anonymous submission to the
+ * researcher's Google Apps Script web app. No tracking, CDN or analytics.
+ */
+// ▼ Google Apps Script 網頁應用程式網址（以 /exec 結尾）/ Apps Script Web App URL (ends with /exec)
+const SHEET_ENDPOINT = '';
+const Q = [
+ {id:'Q01',type:'choice',group:'profile',en:'What is your current year of study?',zh:'你目前就讀的年級是？',options:[['Year 1','大一'],['Year 2','大二'],['Year 3','大三'],['Year 4','大四'],['Graduate','研究所'],['Other','其他']]},
+ {id:'Q02',type:'text',group:'profile',en:'Which STUST department or program do you study in?',zh:'你目前就讀南臺科大哪個系所？',placeholder:'e.g. Information Management / 例如：資訊管理系'},
+ {id:'Q03',type:'choice',group:'profile',en:'Have you used generative AI for university coursework?',zh:'你是否曾在課業中使用過生成式 AI？',options:[['Yes','有'],['No','沒有']]},
+ {id:'Q04',type:'choice',group:'profile',en:'How often do you use generative AI for university work?',zh:'你使用生成式 AI 處理課業的頻率為何？',options:[['Less than monthly','不到每月一次'],['1–3 times / month','每月 1–3 次'],['1–2 days / week','每週 1–2 天'],['3–5 days / week','每週 3–5 天'],['Daily','每天']]},
+ {id:'Q05',type:'choice',group:'profile',en:'Which generative AI tool do you use most often?',zh:'你最常使用哪一種生成式 AI 工具？',options:[['ChatGPT','ChatGPT'],['Gemini','Gemini'],['Microsoft Copilot','Microsoft Copilot'],['Claude','Claude'],['Other','其他']]},
+ {id:'Q06',type:'scale',group:'depend',en:'I rely on generative AI to help complete my course assignments.',zh:'我會依賴生成式 AI 協助完成課堂作業。'},
+ {id:'Q07',type:'scale',group:'depend',en:'Without generative AI, certain university tasks would be difficult for me to complete.',zh:'如果沒有生成式 AI，有些課業任務對我來說會比較難完成。'},
+ {id:'Q08',type:'scale',group:'depend',en:'When a study problem is difficult, I tend to ask AI before exploring solutions myself.',zh:'遇到困難的課業問題時，我通常會先詢問 AI，再自己思考解法。'},
+ {id:'Q09',type:'scale',group:'critical',cluster:'ANALYTICITY / 分析能力',en:'Before using an AI response, I consider the assumptions behind it.',zh:'採用 AI 的回答前，我會思考它依據哪些假設。'},
+ {id:'Q10',type:'scale',group:'critical',en:'I compare information from AI with evidence from other sources.',zh:'我會將 AI 提供的資訊與其他來源的證據進行比較。'},
+ {id:'Q11',type:'scale',group:'critical',en:'I can explain why an AI-generated answer is reasonable or unreasonable.',zh:'我能說明 AI 的回答為何合理或不合理。'},
+ {id:'Q12',type:'scale',group:'critical',en:'I notice when an AI-generated explanation lacks evidence.',zh:'當 AI 的說明缺乏證據時，我通常能察覺。'},
+ {id:'Q13',type:'scale',group:'critical',en:'I distinguish facts from opinions in AI-generated content.',zh:'我會區分 AI 產生內容中的事實與觀點。'},
+ {id:'Q14',type:'scale',group:'critical',en:'I evaluate whether AI suggestions fit the requirements of my assignment.',zh:'我會評估 AI 的建議是否符合實際作業要求。'},
+ {id:'Q15',type:'scale',group:'critical',cluster:'OPEN-MINDEDNESS / 開放思考',en:'I am willing to reconsider my opinion when I see convincing evidence.',zh:'當出現有說服力的證據時，我願意重新思考原本的看法。'},
+ {id:'Q16',type:'scale',group:'critical',en:'I actively look for viewpoints that differ from an AI-generated answer.',zh:'我會主動尋找與 AI 回答不同的觀點。'},
+ {id:'Q17',type:'scale',group:'critical',en:'I can accept that my own interpretation may be incorrect.',zh:'我能接受自己的理解可能有錯。'},
+ {id:'Q18',type:'scale',group:'critical',en:'I consider more than one possible solution to a study problem.',zh:'面對課業問題時，我會考慮不只一種解法。'},
+ {id:'Q19',type:'scale',group:'critical',en:'I listen carefully to classmates whose interpretations differ from mine.',zh:'同學的理解與我不同時，我會認真聆聽。'},
+ {id:'Q20',type:'scale',group:'critical',en:'I change my conclusion when better information becomes available.',zh:'有更可靠的資訊時，我會調整自己的結論。'},
+ {id:'Q21',type:'scale',group:'critical',cluster:'SYSTEMATICITY / 系統性思考',en:'I break complicated study questions into smaller parts before answering.',zh:'回答複雜的課業問題前，我會先將問題拆解成較小的部分。'},
+ {id:'Q22',type:'scale',group:'critical',en:'I follow a clear sequence of steps when evaluating information.',zh:'評估資訊時，我會按照清楚的步驟進行。'},
+ {id:'Q23',type:'scale',group:'critical',en:'I check whether my final answer follows logically from the evidence.',zh:'我會確認最後的答案是否能由證據合理推導。'},
+ {id:'Q24',type:'scale',group:'critical',en:'I review important details before submitting an AI-assisted assignment.',zh:'繳交 AI 協助完成的作業前，我會再次檢查重要細節。'},
+ {id:'Q25',type:'scale',group:'critical',en:'I organize information from different sources before reaching a conclusion.',zh:'形成結論前，我會整理不同來源的資訊。'},
+ {id:'Q26',type:'scale',group:'creative',en:'I think of original ways to solve everyday problems.',zh:'我會想出有創意的方法來解決日常問題。'},
+ {id:'Q27',type:'scale',group:'creative',en:'I find new uses for familiar objects or ideas.',zh:'我能為熟悉的物品或概念想出新的用途。'},
+ {id:'Q28',type:'scale',group:'creative',en:'I combine different ideas to create something new.',zh:'我會結合不同想法，產生新的點子。'},
+ {id:'Q29',type:'scale',group:'creative',en:'I explore several approaches before choosing one.',zh:'我會探索多種方法後，再決定採用哪一種。'},
+ {id:'Q30',type:'scale',group:'creative',en:'I suggest unconventional ideas in class or group projects.',zh:'在課堂或分組專題中，我會提出不同於一般做法的想法。'},
+ {id:'Q31',type:'scale',group:'creative',en:'I improve existing ideas by adding my own perspective.',zh:'我會加入自己的觀點，改進既有的想法。'}
+];
+const GROUPS = ['intro','profile','depend','critical','creative','review','success'];
+const GKEY = {profile:'CONTEXT',depend:'DEPENDENCE',critical:'CRITICAL THINKING',creative:'CREATIVITY'};
+const counts = {profile:5,depend:3,critical:17,creative:6};
+const form = Object.fromEntries(Q.map(q=>[q.id,'']));
+const state = {stage:'intro',answers:form,consent:false,saving:false,submitted:null,respondentId:createId()};
+const $=sel=>document.querySelector(sel);
+const esc = value=>String(value==null?'':value).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const toText = value=>String(value==null?'':value).replace(/[\r\n\t]+/g,' ').trim();
+const countAnswers = ()=>Q.filter(q=>String(state.answers[q.id]||'').trim()!=='').length;
+const inGroup = g=>Q.filter(q=>q.group===g);
+const completed = g=>inGroup(g).filter(q=>String(state.answers[q.id]||'').trim()!=='').length;
+let toastTimer=null;
+function createId(){
+ const a=(typeof crypto!=='undefined'&&typeof crypto.randomUUID==='function')?crypto.randomUUID().slice(0,8):Math.random().toString(36).slice(2,10);
+ return 'STUST-'+new Date().toISOString().slice(0,10).replaceAll('-','')+'-'+a.toUpperCase();
+}
+/* ---------- VIEW LAYER (redesigned: Traditional Chinese primary, English secondary) ---------- */
+function showToast(msg){const e=$('#toast');const p=String(msg).split(' / ');e.innerHTML=p.length>1?'<strong>'+esc(p.slice(1).join(' / '))+'</strong><span>'+esc(p[0])+'</span>':'<strong>'+esc(msg)+'</strong>';e.classList.add('visible');clearTimeout(toastTimer);toastTimer=setTimeout(()=>e.classList.remove('visible'),4300)}
+function makeHero(){
+ return `<section class="hero">
+ <div class="hero-meta reveal" style="--d:0"><div><span class="zh">學生思考指數・二〇二六</span><span class="lbl">The Student Thinking Index / 2026</span></div><div class="right"><span class="zh">南臺科技大學</span><span class="lbl">Southern Taiwan University of Science and Technology</span></div></div>
+ <div class="hero-head reveal" style="--d:1"><h1 class="hero-title" aria-label="誰在思考？ Who thinks now?"><span>誰在</span><span>思考<em>？</em></span></h1><p class="hero-en">Who thinks now?</p></div>
+ <div class="hero-vertical reveal" style="--d:2" aria-hidden="true"><span class="tcu">AI</span> 依賴<b>・</b>批判性思考<b>・</b>創造力</div>
+ <div class="hero-foot">
+  <p class="lede reveal" style="--d:2">生成式 AI 依賴、批判性思考<br>與創造力之關聯性研究<span class="en">The relationship between AI dependence, critical thinking &amp; creativity.</span></p>
+  <dl class="facts reveal" style="--d:3"><div><dt>31</dt><dd>題問卷<small>Questions</small></dd></div><div><dt>7</dt><dd>分鐘左右<small>Minutes</small></dd></div><div><dt>匿</dt><dd>匿名作答<small>Anonymous</small></dd></div></dl>
+  <label class="consent reveal" style="--d:4"><input id="consent" type="checkbox" ${state.consent?'checked':''}><span class="txt"><b>我已滿 18 歲、為南臺科大學生</b>，並自願參加此匿名研究問卷。我了解提交前可隨時停止作答，問卷不蒐集姓名或學號。<span class="en">I am at least 18, a STUST student, and I voluntarily agree to take part in this anonymous research questionnaire. I understand I can stop before submitting. No name or student ID is collected.</span>${alreadySubmitted()?'<span class="repeat-note">此裝置已送出過一次問卷，每人請只填答一次。<span class="en">This device has already submitted a response. Please answer only once.</span></span>':''}</span></label>
+ </div></section>`
+}
+function question(q,idx=0){
+ const val=state.answers[q.id];let answer='';
+ if(q.type==='text'){const ph=String(q.placeholder||'').split(' / ');answer=`<input class="line-input" data-q="${q.id}" aria-label="${esc(q.zh+' '+q.en)}" placeholder="${esc(ph.length>1?ph[1]+'　'+ph[0]:ph[0])}" value="${esc(val)}" autocomplete="off" maxlength="120"/>`}
+ else if(q.type==='choice')answer=`<div class="option-wrap" role="group" aria-label="${esc(q.zh)}">${q.options.map(([en,zh])=>`<button type="button" class="option ${val===en?'active':''}" data-q="${q.id}" data-value="${esc(en)}" aria-pressed="${val===en}"><span class="o-zh">${esc(zh)}</span>${zh!==en?`<span class="o-en">${esc(en)}</span>`:''}</button>`).join('')}</div>`;
+ else {
+  const h=q.group==='creative'?[['幾乎不曾','Almost never'],['幾乎總是','Almost always']]:[['非常不同意','Strongly disagree'],['非常同意','Strongly agree']];
+  answer=`<div class="scale" role="group" aria-label="${esc(q.zh)}">${[1,2,3,4,5].map(n=>`<button type="button" class="scale-btn ${String(val)===String(n)?'selected':''}" data-q="${q.id}" data-value="${n}" aria-label="${n} / 5" aria-pressed="${String(val)===String(n)}">${n}</button>`).join('')}</div><div class="scale-hints"><div>1　${h[0][0]}<span class="en">${h[0][1]}</span></div><div>${h[1][0]}　5<span class="en">${h[1][1]}</span></div></div>`;
+ }
+ return `<div class="qitem reveal" data-id="${q.id}" style="--d:${Math.min(idx,5)}"><div class="qno">${q.id.slice(1)}</div><div class="qbody"><h3 class="qzh">${esc(q.zh)}</h3><p class="qen">${esc(q.en)}</p><div class="qanswer">${answer}</div></div></div>`
+}
+function surveyStage(g){
+ const copy={
+  profile:{num:'壹',kick:'第一部分',en:'Section 01 — The Context',t:'先，<br>談談你<em>。</em>',te:'You, first.',zh:'關於你與 AI 的使用情況',sub:'先了解你的學習背景與 AI 使用習慣。',sube:'A few details about your learning context.'},
+  depend:{num:'貳',kick:'第二部分',en:'Section 02 — The Dependence',t:'你依賴<br>AI 嗎<em>？</em>',te:'Rely on AI?',zh:'你有多依賴 AI？',sub:'三個問題，依實際經驗回答即可。',sube:'Three questions. No judgment, just your experience.'},
+  critical:{num:'參',kick:'第三部分',en:'Section 03 — How You Think',t:'多問一句<br>為什麼<em>。</em>',te:'Ask why.',zh:'你的批判性思考習慣',sub:'分析能力、開放思考、系統性思考。',sube:'Analyticity. Open-mindedness. Systematicity.'},
+  creative:{num:'肆',kick:'第四部分',en:'Section 04 — The Creative Mind',t:'讓想法<br>生長<em>。</em>',te:'Ideas grow.',zh:'你的創意發想習慣',sub:'六個問題，了解你的日常創意習慣。',sube:'Six questions about everyday creative thinking.'}
+ }[g];
+ const zhNum=['其一','其二','其三'];let ci=0;
+ const rendered=inGroup(g).map((q,idx)=>(q.cluster?`<div class="cluster reveal" style="--d:0"><span class="cl-no">${zhNum[ci++]||''}</span><span class="cl-zh">${esc(q.cluster.split(' / ')[1])}</span><span class="cl-en">${esc(q.cluster.split(' / ')[0])}</span></div>`:'')+question(q,idx)).join('');
+ const head=g==='critical'?'':`<div class="list-head reveal"><span class="zh">${g==='profile'?'個人背景':'請選擇最符合你的程度'}</span><span class="lbl">${g==='profile'?'Background':'1 – 5 scale'}</span></div>`;
+ return `<section class="sec ${g}"><aside class="sec-side"><div class="sec-top reveal" style="--d:0"><div class="kicker">${copy.kick}</div><span class="lbl">${copy.en}</span></div><div class="sec-num reveal" style="--d:1" aria-hidden="true">${copy.num}</div><div class="sec-bottom reveal" style="--d:2"><h2 class="sec-title">${copy.t}</h2><p class="sec-en">${copy.te}</p><p class="sec-desc"><b>${copy.zh}・${counts[g]} 題</b>${copy.sub}<span class="en">${copy.sube}</span></p></div></aside><div class="sec-main"><div class="qlist">${head}${rendered}</div></div></section>`
+}
+function makeReview(){
+ const sections=[['profile','基本資料','Background'],['depend','AI 依賴','AI dependence'],['critical','批判思考','Critical thinking'],['creative','創造力','Creativity']];const done=countAnswers();
+ return `<section class="review"><div class="rv-head"><div class="rv-intro"><div class="kicker reveal">最後確認 <span class="lbl">Final check</span></div><h2 class="rv-title reveal" style="--d:1">你的想法<em>。</em></h2><p class="rv-sub reveal" style="--d:2">最後確認：送出後，答案將匿名傳送給研究團隊，不包含姓名、學號或任何可識別身分的資訊。<span class="en">One last check. Answers are sent anonymously to the research team, with no name, student ID or identifying information.</span></p></div><div class="rv-count reveal" style="--d:3"><strong>${done}</strong><span class="of">／ 31 題已作答</span><span class="lbl">Answered</span></div></div>
+ <div class="rv-lines">${sections.map(([g,zh,en],i)=>{const c=completed(g),p=c/counts[g]*100;return `<div class="review-line reveal" style="--d:${i+3}"><div class="nm">${zh}<span class="en">${en}</span></div><div class="n">${c} / ${counts[g]}</div><div class="line-meter"><span class="${p>=100?'full':''}" style="width:${p}%"></span></div></div>`}).join('')}</div>
+ <div class="save-message reveal" style="--d:7"><strong>送出後即無法修改答案</strong><span class="en">Answers can't be changed after you submit.</span></div></section>`
+}
+function makeSuccess(){const sub=state.submitted||{};const at=sub.at?new Date(sub.at):new Date();const t=at.toLocaleString('zh-TW',{hour12:false});
+ return `<section class="success"><div class="kicker reveal">已送出問卷 <span class="lbl">Response submitted</span></div><div class="sc-body"><h2 class="sc-title reveal" style="--d:1">感謝你的<br>參與<em>。</em></h2><p class="sc-en reveal" style="--d:2">Thank you.</p><p class="sc-txt reveal" style="--d:3">你的 31 題答案已匿名送達研究團隊。你可以關閉此頁面。<span class="en">Your 31 answers have been sent anonymously to the research team. You can close this page now.</span></p><dl class="sc-meta reveal" style="--d:4"><div><dt>回覆編號<small>Response ID</small></dt><dd>${esc(sub.id||'')}</dd></div><div><dt>送出時間<small>Submitted</small></dt><dd>${esc(t)}</dd></div></dl></div><div class="sc-seal reveal" style="--d:3" aria-hidden="true"><span>完</span><span>成</span></div></section>`}
+function render(){
+ const v=$('#view'); v.scrollTop=0;v.classList.remove('entering');
+ v.innerHTML=state.stage==='intro'?makeHero():state.stage==='review'?makeReview():state.stage==='success'?makeSuccess():surveyStage(state.stage);
+ $('#footer').className='footer is-'+state.stage;
+ const n=countAnswers();
+ $('#footIndex').textContent=String(n).padStart(2,'0')+' / 31';
+ $('#headerMeter').style.width=(n/31*100)+'%';
+ const cap={intro:['匿名研究問卷','Anonymous research survey'],profile:['學習背景・5 題','Your study context'],depend:['AI 依賴程度・3 題','AI dependence'],critical:['批判性思考・17 題','Critical thinking'],creative:['創造力・6 題','Creativity'],review:['確認後送出','Review and submit'],success:['已完成問卷','Response complete']}[state.stage];
+ $('#footCaption').innerHTML=cap[0]+'<small>'+cap[1]+'</small>';
+ $('#backBtn').style.display=['intro','success'].includes(state.stage)?'none':'inline-flex';
+ const nb={intro:['開始作答','Begin survey','→'],profile:['下一部分','Continue','→'],depend:['下一部分','Continue','→'],critical:['下一部分','Continue','→'],creative:['檢查答案','Review','→'],review:['送出問卷','Submit survey','↗'],success:['返回首頁','Back to start','↺']}[state.stage];
+ $('#nextBtn').innerHTML=`<span class="bt-zh">${nb[0]}</span><span class="bt-en">${nb[1]}</span><span class="arrow">${nb[2]}</span>`;
+ $('#nextBtn').disabled=state.stage==='intro'&&!state.consent;
+ v.classList.add('entering');
+ if(state.stage==='intro')$('#consent').addEventListener('change',e=>{state.consent=e.target.checked;$('#nextBtn').disabled=!state.consent;saveDraft()});
+ if(['profile','depend','critical','creative'].includes(state.stage))bindQuestions();
+}
+function bindQuestions(){
+ document.querySelectorAll('#view [data-q]').forEach(el=>{
+ if(el.tagName==='INPUT')el.addEventListener('input',()=>{state.answers[el.dataset.q]=el.value;setAnswered(el.dataset.q);saveDraft()});
+ else el.addEventListener('click',()=>{const id=el.dataset.q;state.answers[id]=el.dataset.value;const p=el.closest('.qanswer');p.querySelectorAll('[data-q]').forEach(b=>{b.classList.toggle('active',b===el);b.classList.toggle('selected',b===el);b.setAttribute('aria-pressed',String(b===el))});setAnswered(id);saveDraft()});
+ });
+}
+function setAnswered(id){const r=document.querySelector('.qitem[data-id="'+id+'"]');if(r)r.classList.remove('missing');$('#footIndex').textContent=String(countAnswers()).padStart(2,'0')+' / 31';$('#headerMeter').style.width=(countAnswers()/31*100)+'%'}
+function verifyGroup(g){const missed=inGroup(g).filter(q=>!String(state.answers[q.id]||'').trim());if(missed.length){missed.forEach(q=>document.querySelector('.qitem[data-id="'+q.id+'"]').classList.add('missing'));const first=document.querySelector('.qitem[data-id="'+missed[0].id+'"]');first?.scrollIntoView({behavior:'smooth',block:'center'});showToast('Please answer '+missed.length+' remaining question(s) / 還有 '+missed.length+' 題尚未作答');return false}if(g==='profile'&&state.answers.Q03==='No'){showToast('This survey is for students who have used AI for coursework. / 本問卷對象為曾在課業中使用 AI 的學生。');return false}return true}
+function goto(next,animate=true){
+ const doIt=()=>{state.stage=next;render();saveDraft()};
+ if(!animate||window.matchMedia('(prefers-reduced-motion: reduce)').matches){doIt();return}
+ const wipe=$('#wipe');wipe.classList.remove('exit');wipe.classList.add('active');setTimeout(()=>{doIt();wipe.classList.add('exit')},365);setTimeout(()=>{wipe.classList.remove('active','exit')},790);
+}
+async function next(){if(state.saving)return;
+ const g=state.stage;
+ if(g==='intro'){if(!state.consent){showToast('Please provide consent / 請先勾選同意參與');return}goto('profile')}
+ else if(['profile','depend','critical','creative'].includes(g)){if(!verifyGroup(g))return;goto(GROUPS[GROUPS.indexOf(g)+1])}
+ else if(g==='review'){const missed=Q.filter(q=>!String(state.answers[q.id]||'').trim());if(missed.length){goto(missed[0].group);setTimeout(()=>verifyGroup(missed[0].group),650);return}await submit()}
+ else if(g==='success'){Object.keys(state.answers).forEach(id=>state.answers[id]='');state.respondentId=createId();state.submitted=null;state.consent=false;try{localStorage.removeItem('stustSurveyDraft_v3')}catch(e){}goto('intro')}
+}
+function back(){if(state.saving)return;const i=GROUPS.indexOf(state.stage);if(i>0&&state.stage!=='success')goto(GROUPS[i-1])}
+$('#nextBtn').addEventListener('click',next);$('#backBtn').addEventListener('click',back);
+document.addEventListener('keydown',e=>{if(e.altKey&&e.key==='ArrowRight'){e.preventDefault();next()}if(e.altKey&&e.key==='ArrowLeft'){e.preventDefault();back()}});
+function saveDraft(){try{localStorage.setItem('stustSurveyDraft_v3',JSON.stringify({answers:state.answers,stage:state.stage==='success'?'intro':state.stage,consent:state.consent,respondentId:state.respondentId}))}catch(e){}}
+function loadDraft(){try{const d=JSON.parse(localStorage.getItem('stustSurveyDraft_v3'));if(!d||typeof d!=='object')return;Q.forEach(q=>{if(d.answers&&d.answers[q.id]!==undefined)state.answers[q.id]=d.answers[q.id]});state.consent=!!d.consent;state.respondentId=d.respondentId||state.respondentId;if(GROUPS.includes(d.stage)&&d.stage!=='success')state.stage=d.stage}catch(e){}}
+function openLoading(){$('#savingPercent').textContent='00%';$('#savingBar').style.width='0';$('#savingMessage').innerHTML='正在送出答案<small>Submitting your answers</small>';$('#loading').classList.add('open')}
+function setProgress(p){$('#savingPercent').textContent=String(Math.round(p)).padStart(2,'0')+'%';$('#savingBar').style.width=p+'%'}
+function closeLoading(){$('#loading').classList.remove('open')}
+const SUBMITTED_KEY='stustSubmitted_v1';
+function alreadySubmitted(){try{return !!localStorage.getItem(SUBMITTED_KEY)}catch(e){return false}}
+async function submit(){if(state.saving)return;
+ if(!/^https:\/\/script\.google\.com\/macros\/s\/.+\/exec$/.test(SHEET_ENDPOINT)){showToast('The survey is not connected to the response sheet yet. / 問卷尚未連接資料表，請聯絡研究者。');return}
+ state.saving=true;$('#nextBtn').disabled=true;openLoading();
+ let p=0;const tick=setInterval(()=>{p=Math.min(p+(90-p)*.12,90);setProgress(p)},120);
+ try{
+  const payload={id:state.respondentId,answers:Object.fromEntries(Q.map(q=>[q.id,q.type==='scale'?Number(state.answers[q.id]):toText(state.answers[q.id])]))};
+  const res=await fetch(SHEET_ENDPOINT,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(payload),redirect:'follow'});
+  const out=await res.json().catch(()=>({ok:false,error:'Unexpected response'}));
+  if(!res.ok||!out.ok)throw new Error(out.error||('HTTP '+res.status));
+  clearInterval(tick);setProgress(100);
+  state.submitted={id:payload.id,studentNumber:out.studentNumber,at:new Date()};
+  try{localStorage.removeItem('stustSurveyDraft_v3');localStorage.setItem(SUBMITTED_KEY,new Date().toISOString())}catch(e){}
+  await new Promise(r=>setTimeout(r,350));goto('success');
+ }catch(e){console.error('Submit failed',e);showToast('Could not submit: '+e.message+'. Check your connection and try again. / 送出失敗，請確認網路連線後再試一次。')}
+ finally{clearInterval(tick);state.saving=false;$('#nextBtn').disabled=false;closeLoading()}
+}
+function startup(){loadDraft();render()}
+startup();
+</script>
+</body>
+</html>
