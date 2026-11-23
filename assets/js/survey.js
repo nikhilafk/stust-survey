@@ -480,7 +480,6 @@
       <dl class="done-meta"><div><dt>回覆編號 <span lang="en">Response ID</span></dt><dd>${esc(sub.id || '')}</dd></div><div><dt>送出時間 <span lang="en">Submitted</span></dt><dd>${esc(t)}</dd></div></dl>
       <div class="done-actions">
         <button type="button" class="btn-pill" id="doneHome" data-magnetic="0.25"><span class="btn-label">返回首頁 <span lang="en">Back to start</span></span><span class="btn-fill" aria-hidden="true"></span></button>
-        <a class="btn-pill" href="https://nikhilafk.github.io/nikkyportfolio/" target="_blank" rel="noopener" data-magnetic="0.25"><span class="btn-label">認識研究者 <span lang="en">About the researcher</span> ↗</span><span class="btn-fill" aria-hidden="true"></span></a>
       </div></div>`;
     $('#doneHome', el).addEventListener('click', () => closeApp(false));
     return el;
