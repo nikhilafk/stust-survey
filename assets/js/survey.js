@@ -183,7 +183,7 @@
   // Venn parallax (desktop pointer only)
   function initVenn() {
     if (reduced || !finePointer) return;
-    const hero = $('.hero'), venn = $('.venn'), circles = $$('.venn-c');
+    const hero = $('.hero'), venn = $('.venn svg');
     let tx = 0, ty = 0, cx = 0, cy = 0, raf = 0;
     hero.addEventListener('pointermove', e => {
       const r = hero.getBoundingClientRect();
@@ -192,8 +192,7 @@
     });
     function step() {
       cx += (tx - cx) * 0.08; cy += (ty - cy) * 0.08;
-      venn.style.translate = `${(cx * 26).toFixed(2)}px ${(cy * 18).toFixed(2)}px`;
-      circles.forEach((c, i) => { const k = [1, -0.7, 0.8][i]; c.style.translate = `${(cx * 14 * k).toFixed(2)}px ${(cy * 12 * k).toFixed(2)}px`; });
+      venn.style.translate = `${(cx * -22).toFixed(2)}px ${(cy * -16).toFixed(2)}px`;
       raf = (Math.abs(tx - cx) + Math.abs(ty - cy) > 0.001) ? requestAnimationFrame(step) : 0;
     }
   }

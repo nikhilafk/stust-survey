@@ -52,40 +52,43 @@
   <main id="top">
     <!-- HERO -->
     <section class="hero" aria-labelledby="heroTitle">
-      <div class="hero-badge" data-hero>
-        <p class="hero-badge-text">南臺科技大學<br><span lang="en">STUST students</span></p>
-        <span class="hero-badge-disc"><img src="assets/img/stust-mark.png" alt="南臺科技大學校徽 STUST logo" width="240" height="144"></span>
-      </div>
+      <div class="hero-grid">
+        <div class="hero-copy">
+          <p class="hero-eyebrow" data-hero><span class="hero-logo"><img src="assets/img/stust-mark.png" alt="南臺科技大學" width="240" height="144"></span>南臺科技大學・學生研究問卷</p>
+          <h1 class="hero-title" id="heroTitle" data-hero>誰在<br>思考？</h1>
+          <p class="hero-sub" data-hero>生成式 AI 依賴、批判性思考<br class="m-br">與創造力之關聯性研究<span lang="en">AI dependence, critical thinking &amp; creativity</span></p>
+          <div class="hero-actions" data-hero>
+            <a class="btn-pill btn-dark" href="#start" data-magnetic="0.25"><span class="btn-label">開始作答 <span aria-hidden="true">→</span></span><span class="btn-fill" aria-hidden="true"></span></a>
+            <p class="hero-meta"><span><b lang="en">31</b> 題</span><i aria-hidden="true"></i><span>約 <b lang="en">7</b> 分鐘</span><i aria-hidden="true"></i><span>匿名</span></p>
+          </div>
+        </div>
 
-      <div class="hero-title-wrap" data-hero>
-        <svg class="hero-arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5 L19 19 M19 8 V19 H8" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
-        <h1 class="hero-title" id="heroTitle">
-          <span>生成式 AI 依賴、</span><span>批判性思考與創造力</span><span>之關聯性研究</span>
-        </h1>
-        <p class="hero-title-en" lang="en">AI dependence, critical thinking &amp; creativity</p>
+        <figure class="venn" data-hero>
+          <svg viewBox="0 0 600 600" role="img" aria-labelledby="vennDesc">
+            <desc id="vennDesc">三個研究構面：依賴、思考、創造，三者的交集是你。</desc>
+            <defs>
+              <clipPath id="cpA"><circle cx="300" cy="205" r="170"/></clipPath>
+              <clipPath id="cpB"><circle cx="213" cy="356" r="170"/></clipPath>
+            </defs>
+            <g class="venn-blend">
+              <circle class="vc vc-a" cx="300" cy="205" r="170"/>
+              <circle class="vc vc-b" cx="213" cy="356" r="170"/>
+              <circle class="vc vc-c" cx="387" cy="356" r="170"/>
+            </g>
+            <g clip-path="url(#cpA)"><g clip-path="url(#cpB)"><circle class="vc-core" cx="387" cy="356" r="170"/></g></g>
+            <g class="venn-text" aria-hidden="true">
+              <text x="300" y="120">依賴</text>
+              <text x="148" y="440">思考</text>
+              <text x="452" y="440">創造</text>
+              <text class="you" x="300" y="318">你</text>
+            </g>
+          </svg>
+        </figure>
       </div>
-
-      <figure class="venn" data-hero>
-        <svg viewBox="0 0 600 560" aria-hidden="true" focusable="false">
-          <g class="venn-c venn-c1"><circle cx="300" cy="200" r="160"/></g>
-          <g class="venn-c venn-c2"><circle cx="210" cy="355" r="160"/></g>
-          <g class="venn-c venn-c3"><circle cx="390" cy="355" r="160"/></g>
-          <circle class="venn-pulse" cx="300" cy="305" r="11"/>
-          <circle class="venn-core" cx="300" cy="305" r="11"/>
-        </svg>
-        <figcaption class="venn-labels">
-          <span class="sr-only">三個研究構面：依賴、思考、創造，以及位於交集的你。</span>
-          <span class="vl vl1" aria-hidden="true">依賴</span>
-          <span class="vl vl2" aria-hidden="true">思考</span>
-          <span class="vl vl3" aria-hidden="true">創造</span>
-        </figcaption>
-      </figure>
 
       <div class="marquee" aria-hidden="true">
         <div class="marquee-reveal" data-hero>
-          <div class="marquee-track" id="marqueeTrack">
-            <span class="marquee-unit">誰在思考？<em>—</em><span lang="en">Who thinks now?</span><em>—</em></span><span class="marquee-unit">誰在思考？<em>—</em><span lang="en">Who thinks now?</span><em>—</em></span>
-          </div>
+          <div class="marquee-track" id="marqueeTrack"><span class="marquee-unit">誰在思考？<i></i><span lang="en">Who thinks now?</span><i></i>依賴・思考・創造<i></i></span><span class="marquee-unit">誰在思考？<i></i><span lang="en">Who thinks now?</span><i></i>依賴・思考・創造<i></i></span></div>
         </div>
       </div>
     </section>
